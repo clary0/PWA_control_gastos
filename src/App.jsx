@@ -1,197 +1,140 @@
 
 import { useState, useEffect } from 'react'
-import './App.css'
+import './styles/app.css'
 
 function App() {
-  const [movimientos, setMovimientos] = useState(() => {
-    const datos = localStorage.getItem('movimientos')
-    return datos ? JSON.parse(datos) : []
-  })
+  const [vista, setVista] = useState('Resumen')
+  const [cargando, setCargando] = useState(false)
+  const [error, setError] = useState('')
+  const [enLinea, setEnLinea] = useState(() => navigator.onLine)
 
-  const [tipo, setTipo] = useState('Gasto')
-  const [concepto, setConcepto] = useState('')
-  const [cantidad, setCantidad] = useState('')
-  const [fecha, setFecha] = useState('')
-  const [filtro, setFiltro] = useState('Todos')
-  const [idEditar, setIdEditar] = useState(null)
-
+  // Detectar cuando se recupera o se pierde la conexión
   useEffect(() => {
-    localStorage.setItem('movimientos', JSON.stringify(movimientos))
-  }, [movimientos])
-
-  let ingresos = 0
-  let gastos = 0
-
-  movimientos.forEach((movimiento) => {
-    if (movimiento.tipo === 'Ingreso') {
-      ingresos += movimiento.cantidad
-    } else {
-      gastos += movimiento.cantidad
-    }
-  })
-
-  const saldo = ingresos - gastos
-
-  function guardarMovimiento(e) {
-    e.preventDefault()
-
-    if (concepto.trim() === '' || Number(cantidad) <= 0 || !fecha) {
-      alert('Completa todos los datos correctamente')
-      return
+    function conexionRestaurada() {
+      setEnLinea(true)
     }
 
-    const nuevo = {
-      id: idEditar !== null ? idEditar : Date.now(),
-      tipo: tipo,
-      concepto: concepto,
-      cantidad: Number(cantidad),
-      fecha: fecha,
+    function conexionPerdida() {
+      setEnLinea(false)
     }
 
-    if (idEditar !== null) {
-      setMovimientos(movimientos.map((m) =>
-        m.id === idEditar ? nuevo : m
-      ))
-    } else {
-      setMovimientos([...movimientos, nuevo])
+    window.addEventListener('online', conexionRestaurada)
+    window.addEventListener('offline', conexionPerdida)
+
+    // Limpiar los eventos al desmontar el componente
+    return () => {
+      window.removeEventListener('online', conexionRestaurada)
+      window.removeEventListener('offline', conexionPerdida)
     }
+  }, [])
 
-    limpiarFormulario()
-  }
-
-  function limpiarFormulario() {
-    setTipo('Gasto')
-    setConcepto('')
-    setCantidad('')
-    setFecha('')
-    setIdEditar(null)
-  }
-
-  function editarMovimiento(movimiento) {
-    setIdEditar(movimiento.id)
-    setTipo(movimiento.tipo)
-    setConcepto(movimiento.concepto)
-    setCantidad(movimiento.cantidad)
-    setFecha(movimiento.fecha)
-  }
-
-  function eliminarMovimiento(id) {
-    if (confirm('¿Quieres eliminar este movimiento?')) {
-      setMovimientos(movimientos.filter((m) => m.id !== id))
-    }
+  function navegar(nuevaVista) {
+    setError('')
+    setCargando(false)
+    setVista(nuevaVista)
   }
 
   return (
-    <div className="app">
-      <header>
-        <h1>Control de Gastos</h1>
-        <p>Mis finanzas personales</p>
+    <div className="app-shell">
+
+      {/* SHELL: encabezado */}
+      <header className="shell-header">
+        <div className="marca">
+          <span className="icono">💰</span>
+
+          <div>
+            <h1>Control de Gastos</h1>
+            <p>Mis finanzas personales</p>
+          </div>
+        </div>
+
+        <span
+          className={`estado ${enLinea ? 'online' : 'offline'}`}
+          role="status"
+          aria-live="polite"
+        >
+          <span className="punto" aria-hidden="true" />
+          {enLinea ? 'En línea' : 'Sin conexión'}
+        </span>
       </header>
 
-      <main>
-        <section className="resumen">
-          <h2>Resumen</h2>
-          <p>Ingresos: ${ingresos.toFixed(2)}</p>
-          <p>Gastos: ${gastos.toFixed(2)}</p>
-          <h3>Dinero disponible: ${saldo.toFixed(2)}</h3>
-        </section>
+      {/* Aviso cuando no hay conexión */}
+      {!enLinea && (
+        <div className="aviso-conexion" role="status">
+          No tienes conexión de red. Algunas funciones podrían
+          no estar disponibles.
+        </div>
+      )}
 
-        <section className="formulario">
-          <h2>{idEditar !== null ? 'Editar movimiento' : 'Registrar movimiento'}</h2>
-
-          <form onSubmit={guardarMovimiento}>
-            <label>Tipo:</label>
-            <select
-              value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
-            >
-              <option value="Ingreso">Ingreso</option>
-              <option value="Gasto">Gasto</option>
-            </select>
-
-            <label>Concepto:</label>
-            <input
-              type="text"
-              value={concepto}
-              onChange={(e) => setConcepto(e.target.value)}
-              placeholder="Ej. Alimentación"
-              required
-            />
-
-            <label>Cantidad:</label>
-            <input
-              type="number"
-              min="0.01"
-              step="0.01"
-              value={cantidad}
-              onChange={(e) => setCantidad(e.target.value)}
-              placeholder="Ej. 500"
-              required
-            />
-
-            <label>Fecha:</label>
-            <input
-              type="date"
-              value={fecha}
-              onChange={(e) => setFecha(e.target.value)}
-              required
-            />
-
-            <button type="submit">
-              {idEditar !== null ? 'Guardar cambios' : 'Guardar'}
-            </button>
-
-            {idEditar !== null && (
-              <button type="button" onClick={limpiarFormulario}>
-                Cancelar
-              </button>
-            )}
-          </form>
-        </section>
-
-        <section className="historial">
-          <h2>Historial de movimientos</h2>
-
-          <label>Filtrar por tipo:</label>
-          <select
-            value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
+      {/* SHELL: área que contiene cada vista */}
+      <main className="shell-main">
+        {cargando ? (
+          <div
+            className="estado-carga"
+            role="status"
+            aria-label="Cargando contenido"
           >
-            <option value="Todos">Todos</option>
-            <option value="Ingreso">Ingresos</option>
-            <option value="Gasto">Gastos</option>
-          </select>
+            <div className="skeleton titulo-skeleton" />
+            <div className="skeleton linea-skeleton" />
+            <div className="skeleton tarjeta-skeleton" />
+          </div>
+        ) : error ? (
+          <section className="mensaje-error" role="alert">
+            <h2>No se pudo mostrar el contenido</h2>
+            <p>{error}</p>
 
-          {movimientos.length === 0 ? (
-            <p>Aún no hay movimientos registrados.</p>
-          ) : (
-            <ul>
-              {movimientos
-                .filter((m) => filtro === 'Todos' || m.tipo === filtro)
-                .map((m) => (
-                  <li key={m.id}>
-                    <strong>{m.concepto}</strong>
-                    <p>Tipo: {m.tipo}</p>
-                    <p>Cantidad: ${m.cantidad.toFixed(2)}</p>
-                    <p>Fecha: {m.fecha}</p>
+            <button onClick={() => setError('')}>
+              Cerrar mensaje
+            </button>
+          </section>
+        ) : (
+          <section className="vista-actual">
+            <p className="etiqueta">CONTROL DE GASTOS PERSONALES</p>
+            <h2>{vista}</h2>
 
-                    <button onClick={() => editarMovimiento(m)}>
-                      Editar
-                    </button>
+            <p>
+              Aquí se mostrará el contenido de la sección seleccionada.
+            </p>
 
-                    <button onClick={() => eliminarMovimiento(m.id)}>
-                      Eliminar
-                    </button>
-                  </li>
-                ))}
-            </ul>
-          )}
-        </section>
+            <div className="area-contenido">
+              Área reservada para esta vista
+            </div>
+          </section>
+        )}
       </main>
 
-      <footer>
-        <p>Proyecto escolar - Control de Gastos Personales</p>
-      </footer>
+      {/* SHELL: navegación inferior */}
+      <nav className="shell-nav" aria-label="Navegación principal">
+        <button
+          type="button"
+          className={vista === 'Resumen' ? 'activo' : ''}
+          aria-current={vista === 'Resumen' ? 'page' : undefined}
+          onClick={() => navegar('Resumen')}
+        >
+          <span aria-hidden="true">📊</span>
+          Resumen
+        </button>
+
+        <button
+          type="button"
+          className={vista === 'Registrar' ? 'activo' : ''}
+          aria-current={vista === 'Registrar' ? 'page' : undefined}
+          onClick={() => navegar('Registrar')}
+        >
+          <span aria-hidden="true">➕</span>
+          Registrar
+        </button>
+
+        <button
+          type="button"
+          className={vista === 'Movimientos' ? 'activo' : ''}
+          aria-current={vista === 'Movimientos' ? 'page' : undefined}
+          onClick={() => navegar('Movimientos')}
+        >
+          <span aria-hidden="true">📋</span>
+          Movimientos
+        </button>
+      </nav>
     </div>
   )
 }
