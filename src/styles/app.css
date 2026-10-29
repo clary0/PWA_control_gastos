@@ -1,0 +1,270 @@
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f7f5;
+  color: #26352d;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Encabezado permanente */
+.shell-header {
+  background: #1e4938;
+  color: white;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icono {
+  font-size: 32px;
+}
+
+.shell-header h1 {
+  margin: 0 0 5px;
+  font-size: 22px;
+}
+
+.shell-header p {
+  margin: 0;
+  color: #d5e8dc;
+  font-size: 13px;
+}
+
+/* Estado real informado por el navegador */
+.estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.online {
+  background: #d9f4e2;
+  color: #17633b;
+}
+
+.offline {
+  background: #ffe2df;
+  color: #9c2922;
+}
+
+.punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Aviso de conexión */
+.aviso-conexion {
+  padding: 12px 18px;
+  text-align: center;
+  font-size: 14px;
+  background: #fff0d5;
+  color: #704400;
+  border-bottom: 1px solid #f0d7a7;
+}
+
+/* Área principal del Shell */
+.shell-main {
+  flex: 1;
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 24px 18px;
+}
+
+.vista-actual {
+  background: white;
+  border: 1px solid #e1e9e3;
+  border-radius: 12px;
+  padding: 24px;
+  min-height: 240px;
+  box-shadow: 0 3px 10px #1e49380a;
+}
+
+.etiqueta {
+  color: #28764e;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.vista-actual h2 {
+  margin: 12px 0;
+  font-size: 24px;
+  color: #1e4938;
+}
+
+.vista-actual p {
+  color: #65736a;
+  line-height: 1.5;
+}
+
+.area-contenido {
+  margin-top: 24px;
+  padding: 28px 16px;
+  border: 1px dashed #b9cbbf;
+  border-radius: 8px;
+  background: #f4f7f5;
+  color: #65736a;
+  text-align: center;
+}
+
+/* Estado de carga: skeleton */
+.estado-carga {
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e1e9e3;
+}
+
+.skeleton {
+  background: #e5ebe6;
+  border-radius: 6px;
+  margin-bottom: 18px;
+  animation: pulso 1.2s ease-in-out infinite alternate;
+}
+
+.titulo-skeleton {
+  height: 26px;
+  width: 45%;
+}
+
+.linea-skeleton {
+  height: 15px;
+  width: 75%;
+}
+
+.tarjeta-skeleton {
+  height: 100px;
+  width: 100%;
+}
+
+@keyframes pulso {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+/* Manejo visual de errores */
+.mensaje-error {
+  background: white;
+  border-left: 4px solid #b9382f;
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.mensaje-error h2 {
+  color: #9c2922;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.mensaje-error button {
+  background: #1e4938;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  padding: 10px 16px;
+}
+
+/* Navegación inferior */
+.shell-nav {
+  display: flex;
+  justify-content: space-around;
+  gap: 8px;
+  padding: 10px;
+  background: white;
+  border-top: 1px solid #e1e9e3;
+  position: sticky;
+  bottom: 0;
+}
+
+.shell-nav button {
+  flex: 1;
+  max-width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 5px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: #65736a;
+  font-size: 12px;
+}
+
+.shell-nav button span {
+  font-size: 21px;
+}
+
+.shell-nav button.activo {
+  background: #e6f1e9;
+  color: #28764e;
+  font-weight: bold;
+}
+
+.shell-nav button:focus-visible,
+.mensaje-error button:focus-visible {
+  outline: 2px solid #28764e;
+  outline-offset: 3px;
+}
+
+/* Diseño adaptable */
+@media (max-width: 480px) {
+  .shell-header {
+    padding: 17px 12px;
+  }
+
+  .shell-header h1 {
+    font-size: 17px;
+  }
+
+  .icono {
+    font-size: 26px;
+  }
+
+  .shell-main {
+    padding: 16px 12px;
+  }
+
+  .vista-actual {
+    padding: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
