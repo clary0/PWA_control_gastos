@@ -1,140 +1,117 @@
 
-import { useState, useEffect } from 'react'
-import './styles/app.css'
+import { useLayoutEffect } from 'react'
+import { Routes, Route, useNavigate, useLocation } from 'react-router'
+import AppHeader from './components/shell/AppHeader.jsx'
+import useOnlineStatus from './hooks/useOnlineStatus.js'
+import NoEncontrado from './views/noencontrado.jsx'
+import ViewErrorBoundary from './components/shell/ViewErrorBoundary.jsx'
+import Resumen from './views/Resumen.jsx'
+
+function NavegacionInferior() {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  return (
+    <nav className="shell-nav" aria-label="Navegación principal">
+      <button
+        type="button"
+        className={location.pathname === '/' ? 'activo' : ''}
+        aria-current={location.pathname === '/' ? 'page' : undefined}
+        onClick={() => navigate('/')}
+      >
+        <span aria-hidden="true">📊</span>
+        Resumen
+      </button>
+
+      <button
+        type="button"
+        className={location.pathname === '/registrar' ? 'activo' : ''}
+        aria-current={location.pathname === '/registrar' ? 'page' : undefined}
+        onClick={() => navigate('/registrar')}
+      >
+        <span aria-hidden="true">➕</span>
+        Registrar
+      </button>
+
+      <button
+        type="button"
+        className={location.pathname === '/movimientos' ? 'activo' : ''}
+        aria-current={location.pathname === '/movimientos' ? 'page' : undefined}
+        onClick={() => navigate('/movimientos')}
+      >
+        <span aria-hidden="true">📋</span>
+        Movimientos
+      </button>
+    </nav>
+  )
+}
+
+function PaginaNoEncontrada() {
+  const navigate = useNavigate()
+
+  return (
+    <main className="shell-main">
+      <NoEncontrado volverInicio={() => navigate('/')} />
+    </main>
+  )
+}
 
 function App() {
-  const [vista, setVista] = useState('Resumen')
-  const [cargando, setCargando] = useState(false)
-  const [error, setError] = useState('')
-  const [enLinea, setEnLinea] = useState(() => navigator.onLine)
+  const enLinea = useOnlineStatus()
 
-  // Detectar cuando se recupera o se pierde la conexión
-  useEffect(() => {
-    function conexionRestaurada() {
-      setEnLinea(true)
-    }
-
-    function conexionPerdida() {
-      setEnLinea(false)
-    }
-
-    window.addEventListener('online', conexionRestaurada)
-    window.addEventListener('offline', conexionPerdida)
-
-    // Limpiar los eventos al desmontar el componente
-    return () => {
-      window.removeEventListener('online', conexionRestaurada)
-      window.removeEventListener('offline', conexionPerdida)
-    }
+  useLayoutEffect(() => {
+    document.getElementById('pre-shell')?.remove()
   }, [])
-
-  function navegar(nuevaVista) {
-    setError('')
-    setCargando(false)
-    setVista(nuevaVista)
-  }
 
   return (
     <div className="app-shell">
+      <AppHeader enLinea={enLinea} />
 
-      {/* SHELL: encabezado */}
-      <header className="shell-header">
-        <div className="marca">
-          <span className="icono">💰</span>
-
-          <div>
-            <h1>Control de Gastos</h1>
-            <p>Mis finanzas personales</p>
-          </div>
-        </div>
-
-        <span
-          className={`estado ${enLinea ? 'online' : 'offline'}`}
-          role="status"
-          aria-live="polite"
-        >
-          <span className="punto" aria-hidden="true" />
-          {enLinea ? 'En línea' : 'Sin conexión'}
-        </span>
-      </header>
-
-      {/* Aviso cuando no hay conexión */}
       {!enLinea && (
         <div className="aviso-conexion" role="status">
-          No tienes conexión de red. Algunas funciones podrían
-          no estar disponibles.
+          No tienes conexión de red. Algunas funciones podrían no estar
+          disponibles.
         </div>
       )}
 
-      {/* SHELL: área que contiene cada vista */}
-      <main className="shell-main">
-        {cargando ? (
-          <div
-            className="estado-carga"
-            role="status"
-            aria-label="Cargando contenido"
-          >
-            <div className="skeleton titulo-skeleton" />
-            <div className="skeleton linea-skeleton" />
-            <div className="skeleton tarjeta-skeleton" />
-          </div>
-        ) : error ? (
-          <section className="mensaje-error" role="alert">
-            <h2>No se pudo mostrar el contenido</h2>
-            <p>{error}</p>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ViewErrorBoundary>
+              <Resumen />
+            </ViewErrorBoundary>
+          }
+        />
 
-            <button onClick={() => setError('')}>
-              Cerrar mensaje
-            </button>
-          </section>
-        ) : (
-          <section className="vista-actual">
-            <p className="etiqueta">CONTROL DE GASTOS PERSONALES</p>
-            <h2>{vista}</h2>
+        <Route
+          path="/registrar"
+          element={
+            <main className="shell-main">
+              <section className="vista-actual">
+                <h2>Registrar movimiento</h2>
+                <p>Próximamente podrás registrar ingresos y gastos.</p>
+              </section>
+            </main>
+          }
+        />
 
-            <p>
-              Aquí se mostrará el contenido de la sección seleccionada.
-            </p>
+        <Route
+          path="/movimientos"
+          element={
+            <main className="shell-main">
+              <section className="vista-actual">
+                <h2>Movimientos</h2>
+                <p>Aquí aparecerán tus ingresos y gastos registrados.</p>
+              </section>
+            </main>
+          }
+        />
 
-            <div className="area-contenido">
-              Área reservada para esta vista
-            </div>
-          </section>
-        )}
-      </main>
+        <Route path="*" element={<PaginaNoEncontrada />} />
+      </Routes>
 
-      {/* SHELL: navegación inferior */}
-      <nav className="shell-nav" aria-label="Navegación principal">
-        <button
-          type="button"
-          className={vista === 'Resumen' ? 'activo' : ''}
-          aria-current={vista === 'Resumen' ? 'page' : undefined}
-          onClick={() => navegar('Resumen')}
-        >
-          <span aria-hidden="true">📊</span>
-          Resumen
-        </button>
-
-        <button
-          type="button"
-          className={vista === 'Registrar' ? 'activo' : ''}
-          aria-current={vista === 'Registrar' ? 'page' : undefined}
-          onClick={() => navegar('Registrar')}
-        >
-          <span aria-hidden="true">➕</span>
-          Registrar
-        </button>
-
-        <button
-          type="button"
-          className={vista === 'Movimientos' ? 'activo' : ''}
-          aria-current={vista === 'Movimientos' ? 'page' : undefined}
-          onClick={() => navegar('Movimientos')}
-        >
-          <span aria-hidden="true">📋</span>
-          Movimientos
-        </button>
-      </nav>
+      <NavegacionInferior />
     </div>
   )
 }
