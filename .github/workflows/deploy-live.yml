@@ -1,37 +1,50 @@
+# .github/workflows/firebase-hosting-merge.yml
+# Publica en el canal live (https://<proyecto>.web.app) SOLO cuando
+# entra código a develop (merge de un PR). No crea vistas previas.
 
-name: Deploy PWA to Firebase Hosting - Live
+name: Desplegar en Firebase Hosting (develop → live)
 
 on:
   push:
-    branches:
-      - develop
+    branches: [develop]
 
 permissions:
   contents: read
 
+# Un despliegue a la vez; si llegan dos merges seguidos, el segundo espera.
+concurrency:
+  group: firebase-hosting-live
+  cancel-in-progress: false
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Descargar codigo
-        uses: actions/checkout@v4
+      - name: Descargar el código
+        uses: actions/checkout@v5
 
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
+      - name: Instalar Node.js 24
+        uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Instalar dependencias
         run: npm ci
 
-      - name: Compilar PWA
+      - name: Revisar código (ESLint)
+        run: npm run lint
+
+      - name: Construir (genera dist/)
         run: npm run build
 
-      - name: Publicar en Firebase Hosting
+      - name: Publicar en Firebase Hosting (live)
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: pwacontroldegastos
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          # Cambia TU_PROYECTO_ID por el ID en MAYÚSCULAS y con _ en lugar de -
+          # Ej.: mi-librero-a1b2c → FIREBASE_SERVICE_ACCOUNT_MI_LIBRERO_A1B2C
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT}}
           channelId: live
+          # Cambia por el ID real del proyecto (tal cual, en minúsculas)
+          projectId: pwacontroldegastos
