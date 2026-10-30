@@ -1,4 +1,18 @@
 
+/* ========================================
+   TEMA: CONTROL DE GASTOS PERSONALES
+   ======================================== */
+
+:root {
+  --gastos: #1e4938;
+  --alto-nav: 64px;
+
+  --bs-link-color: #1e4938;
+  --bs-link-color-rgb: 30, 73, 56;
+}
+
+/* Configuración general */
+
 * {
   box-sizing: border-box;
 }
@@ -20,39 +34,10 @@ body {
   flex-direction: column;
 }
 
-/* Encabezado permanente */
-.shell-header {
-  background: #1e4938;
-  color: white;
-  padding: 20px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-}
+/* ========================================
+   INDICADOR DE CONEXIÓN
+   ======================================== */
 
-.marca {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.icono {
-  font-size: 32px;
-}
-
-.shell-header h1 {
-  margin: 0 0 5px;
-  font-size: 22px;
-}
-
-.shell-header p {
-  margin: 0;
-  color: #d5e8dc;
-  font-size: 13px;
-}
-
-/* Estado real informado por el navegador */
 .estado {
   display: inline-flex;
   align-items: center;
@@ -81,7 +66,10 @@ body {
   background: currentColor;
 }
 
-/* Aviso de conexión */
+/* ========================================
+   AVISO DE CONEXIÓN
+   ======================================== */
+
 .aviso-conexion {
   padding: 12px 18px;
   text-align: center;
@@ -91,13 +79,17 @@ body {
   border-bottom: 1px solid #f0d7a7;
 }
 
-/* Área principal del Shell */
+/* ========================================
+   ÁREA PRINCIPAL DE LA APLICACIÓN
+   ======================================== */
+
 .shell-main {
   flex: 1;
   width: 100%;
-  max-width: 850px;
+  max-width: 720px;
   margin: 0 auto;
   padding: 24px 18px;
+  padding-bottom: calc(var(--alto-nav) + 1rem);
 }
 
 .vista-actual {
@@ -119,7 +111,7 @@ body {
 .vista-actual h2 {
   margin: 12px 0;
   font-size: 24px;
-  color: #1e4938;
+  color: var(--gastos);
 }
 
 .vista-actual p {
@@ -137,7 +129,10 @@ body {
   text-align: center;
 }
 
-/* Estado de carga: skeleton */
+/* ========================================
+   ESTADO DE CARGA: SKELETONS
+   ======================================== */
+
 .estado-carga {
   padding: 24px;
   background: white;
@@ -168,11 +163,19 @@ body {
 }
 
 @keyframes pulso {
-  from { opacity: 0.55; }
-  to { opacity: 1; }
+  from {
+    opacity: 0.55;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
-/* Manejo visual de errores */
+/* ========================================
+   MANEJO VISUAL DE ERRORES
+   ======================================== */
+
 .mensaje-error {
   background: white;
   border-left: 4px solid #b9382f;
@@ -190,23 +193,54 @@ button {
 }
 
 .mensaje-error button {
-  background: #1e4938;
+  background: var(--gastos);
   color: white;
   border: none;
   border-radius: 7px;
   padding: 10px 16px;
 }
 
-/* Navegación inferior */
+/* ========================================
+   PÁGINA NO ENCONTRADA (404)
+   ======================================== */
+
+.pagina-no-encontrada {
+  text-align: center;
+}
+
+.pagina-no-encontrada .area-contenido {
+  margin-top: 24px;
+}
+
+.pagina-no-encontrada button {
+  background: var(--gastos);
+  color: white;
+  border: 1px solid var(--gastos);
+  border-radius: 7px;
+  padding: 10px 16px;
+}
+
+.pagina-no-encontrada button:hover {
+  background: #143528;
+}
+
+/* ========================================
+   NAVEGACIÓN INFERIOR
+   ======================================== */
+
 .shell-nav {
   display: flex;
   justify-content: space-around;
+  align-items: center;
   gap: 8px;
+  min-height: var(--alto-nav);
   padding: 10px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
   background: white;
   border-top: 1px solid #e1e9e3;
   position: sticky;
   bottom: 0;
+  z-index: 10;
 }
 
 .shell-nav button {
@@ -222,6 +256,7 @@ button {
   background: transparent;
   color: #65736a;
   font-size: 12px;
+  line-height: 1.1;
 }
 
 .shell-nav button span {
@@ -234,37 +269,158 @@ button {
   font-weight: bold;
 }
 
+/* ========================================
+   BOTONES CON EL COLOR DEL EQUIPO
+   Para usar con clases de Bootstrap
+   ======================================== */
+
+.bg-gastos {
+  background-color: var(--gastos) !important;
+}
+
+.btn-gastos {
+  --bs-btn-bg: var(--gastos);
+  --bs-btn-border-color: var(--gastos);
+  --bs-btn-color: #fff;
+  --bs-btn-hover-bg: #143528;
+  --bs-btn-hover-border-color: #143528;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-disabled-bg: var(--gastos);
+  --bs-btn-disabled-border-color: var(--gastos);
+}
+
+.btn-outline-gastos {
+  --bs-btn-color: var(--gastos);
+  --bs-btn-border-color: var(--gastos);
+  --bs-btn-hover-bg: var(--gastos);
+  --bs-btn-hover-border-color: var(--gastos);
+  --bs-btn-hover-color: #fff;
+}
+
+/* ========================================
+   ACCESIBILIDAD: FOCO DEL TECLADO
+   ======================================== */
+
 .shell-nav button:focus-visible,
-.mensaje-error button:focus-visible {
+.mensaje-error button:focus-visible,
+.pagina-no-encontrada button:focus-visible {
   outline: 2px solid #28764e;
   outline-offset: 3px;
 }
 
-/* Diseño adaptable */
+/* ========================================
+   DISEÑO ADAPTABLE A MÓVILES
+   ======================================== */
+
 @media (max-width: 480px) {
-  .shell-header {
-    padding: 17px 12px;
-  }
-
-  .shell-header h1 {
-    font-size: 17px;
-  }
-
-  .icono {
-    font-size: 26px;
-  }
-
   .shell-main {
     padding: 16px 12px;
+    padding-bottom: calc(var(--alto-nav) + 1rem);
   }
 
   .vista-actual {
     padding: 18px;
   }
+
+  .estado {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .shell-nav {
+    gap: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .shell-nav button {
+    padding: 10px 3px;
+    font-size: 11px;
+  }
 }
+
+/* ========================================
+   RESPETAR LA PREFERENCIA DE MOVIMIENTO
+   ======================================== */
 
 @media (prefers-reduced-motion: reduce) {
   .skeleton {
     animation: none;
+  }
+}
+
+
+
+/* Página de resumen */
+.tarjetas-resumen {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.tarjeta-financiera {
+  background: #ffffff;
+  border: 1px solid #e1e9e3;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.tarjeta-financiera i {
+  font-size: 28px;
+}
+
+.tarjeta-financiera h3 {
+  margin-top: 12px;
+  font-size: 15px;
+  color: #65736a;
+}
+
+.tarjeta-financiera p {
+  margin-bottom: 0;
+  font-size: 23px;
+  font-weight: bold;
+  color: #1e4938;
+  overflow-wrap: anywhere;
+}
+
+.icono-ingreso {
+  color: #28764e;
+}
+
+.icono-gasto {
+  color: #b9382f;
+}
+
+.tarjeta-financiera.disponible {
+  grid-column: 1 / -1;
+  background: #e6f1e9;
+}
+
+.tarjeta-financiera.disponible i {
+  color: #28764e;
+}
+
+.tarjeta-financiera.disponible small {
+  color: #52685a;
+}
+
+.movimientos-recientes {
+  margin-top: 24px;
+  background: #ffffff;
+}
+
+.movimientos-recientes h3 {
+  color: #1e4938;
+  font-size: 17px;
+}
+
+@media (max-width: 480px) {
+  .tarjetas-resumen {
+    grid-template-columns: 1fr;
+  }
+
+  .tarjeta-financiera.disponible {
+    grid-column: auto;
   }
 }

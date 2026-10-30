@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -6,15 +5,18 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   plugins: [
     react(),
+
     VitePWA({
       registerType: 'autoUpdate',
+
       devOptions: {
         enabled: true,
-  },
+      },
+
       manifest: {
         name: 'Control de Gastos Personales',
         short_name: 'Mis Gastos',
-        description: 'Aplicacion para registrar ingresos y gastos',
+        description: 'Aplicación para registrar ingresos y gastos',
         lang: 'es-MX',
         theme_color: '#dce8f7',
         background_color: '#f4f4f4',
@@ -23,13 +25,22 @@ export default defineConfig({
         scope: '/',
         icons: [
           {
-            src: '/icono.svg',
+            src: '/favicon.svg',
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any',
-        },
-      ],
-    },
+          },
+        ],
+      },
     }),
   ],
+
+  // Acceso mediante Cloudflare Tunnel durante las prácticas
+  server: {
+    allowedHosts: ['.trycloudflare.com'],
+  },
+
+  preview: {
+    allowedHosts: ['.trycloudflare.com'],
+  },
 })

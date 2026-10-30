@@ -1,12 +1,227 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Controla tus ingresos, gastos y dinero disponible."
+    />
+    <meta name="theme-color" content="#1e4938" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>firebase-clara</title>
+
+    <title>Control de Gastos Personales</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f7f5;
+        color: #26352d;
+      }
+
+      .pre-shell {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        background: #f4f7f5;
+      }
+
+      .pre-shell header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 24px;
+        background: #1e4938;
+        color: white;
+      }
+
+      .pre-shell .icono {
+        font-size: 32px;
+      }
+
+      .pre-shell .titulo {
+        font-size: 22px;
+        font-weight: bold;
+      }
+
+      .pre-shell .subtitulo {
+        margin-top: 5px;
+        color: #d5e8dc;
+        font-size: 13px;
+      }
+
+      .pre-shell main {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 850px;
+        margin: 0 auto;
+        padding: 24px 18px;
+      }
+
+      .pre-shell .contenido {
+        width: 100%;
+        padding: 24px;
+        border: 1px solid #e1e9e3;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 3px 10px #1e49380a;
+        text-align: center;
+      }
+
+      .pre-shell .icono-central {
+        margin-bottom: 18px;
+        font-size: 48px;
+      }
+
+      .pre-shell .giro {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 18px;
+        border: 4px solid #e5ebe6;
+        border-top-color: #1e4938;
+        border-radius: 50%;
+        animation: girar 0.8s linear infinite;
+      }
+
+      .pre-shell p {
+        margin: 0;
+        color: #65736a;
+        line-height: 1.5;
+      }
+
+      .pre-shell .skeleton {
+        height: 15px;
+        margin: 22px auto 0;
+        border-radius: 6px;
+        background: #e5ebe6;
+        animation: pulso 1.2s ease-in-out infinite alternate;
+      }
+
+      .pre-shell .skeleton-uno {
+        width: 75%;
+      }
+
+      .pre-shell .skeleton-dos {
+        width: 50%;
+      }
+
+      .pre-shell nav {
+        display: flex;
+        justify-content: space-around;
+        gap: 8px;
+        padding: 10px;
+        border-top: 1px solid #e1e9e3;
+        background: white;
+      }
+
+      .pre-shell nav span {
+        flex: 1;
+        max-width: 180px;
+        padding: 10px 5px;
+        color: #65736a;
+        font-size: 12px;
+        text-align: center;
+      }
+
+      .pre-shell nav strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 21px;
+        font-weight: normal;
+      }
+
+      @keyframes girar {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes pulso {
+        from {
+          opacity: 0.55;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .pre-shell header {
+          padding: 17px 12px;
+        }
+
+        .pre-shell .icono {
+          font-size: 26px;
+        }
+
+        .pre-shell .titulo {
+          font-size: 17px;
+        }
+
+        .pre-shell main {
+          padding: 16px 12px;
+        }
+
+        .pre-shell .contenido {
+          padding: 18px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .pre-shell .giro,
+        .pre-shell .skeleton {
+          animation: none;
+        }
+      }
+    </style>
   </head>
+
   <body>
+    <div class="pre-shell" id="pre-shell">
+      <header>
+        <span class="icono" aria-hidden="true">💰</span>
+        <div>
+          <div class="titulo">Control de Gastos</div>
+          <div class="subtitulo">Organiza tus finanzas personales</div>
+        </div>
+      </header>
+
+      <main>
+        <div class="contenido">
+          <div class="icono-central" aria-hidden="true">📊</div>
+          <div
+            class="giro"
+            role="status"
+            aria-label="Iniciando aplicación"
+          ></div>
+          <p>Preparando tu aplicación...</p>
+          <div class="skeleton skeleton-uno"></div>
+          <div class="skeleton skeleton-dos"></div>
+        </div>
+      </main>
+
+      <nav aria-hidden="true">
+        <span><strong>📊</strong>Resumen</span>
+        <span><strong>➕</strong>Registrar</span>
+        <span><strong>📋</strong>Movimientos</span>
+      </nav>
+    </div>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
