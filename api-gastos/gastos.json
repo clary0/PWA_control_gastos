@@ -1,0 +1,5 @@
+[
+  { "id": 1, "descripcion": "Comida en la cafetería", "monto": 85.5, "categoria": "comida", "fecha": "2026-11-02" },
+  { "id": 2, "descripcion": "Transporte a la universidad", "monto": 40, "categoria": "transporte", "fecha": "2026-11-03" },
+  { "id": 3, "descripcion": "Copias y papelería", "monto": 120, "categoria": "escuela", "fecha": "2026-11-03" }
+]
