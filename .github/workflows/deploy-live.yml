@@ -44,6 +44,7 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           # Cambia TU_PROYECTO_ID por el ID en MAYÚSCULAS y con _ en lugar de -
           # Ej.: mi-librero-a1b2c → FIREBASE_SERVICE_ACCOUNT_MI_LIBRERO_A1B2C
+
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT}}
           channelId: live
           # Cambia por el ID real del proyecto (tal cual, en minúsculas)
