@@ -1,4 +1,3 @@
-
 import { useLayoutEffect } from 'react'
 import { Routes, Route, useNavigate, useLocation } from 'react-router'
 import AppHeader from './components/shell/AppHeader.jsx'
@@ -6,6 +5,7 @@ import useOnlineStatus from './hooks/useOnlineStatus.js'
 import NoEncontrado from './views/noencontrado.jsx'
 import ViewErrorBoundary from './components/shell/ViewErrorBoundary.jsx'
 import Resumen from './views/Resumen.jsx'
+
 
 function NavegacionInferior() {
   const navigate = useNavigate()
