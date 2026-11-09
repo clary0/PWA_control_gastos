@@ -9,7 +9,7 @@ export default function AppHeader({ enLinea }) {
       <div className="container flex-nowrap">
         <Link to="/" className="navbar-brand fw-bold text-truncate">
           <i className="bi bi-wallet2 me-2" aria-hidden="true"></i>
-          Control de Gastos
+          Gastos
         </Link>
 
         <div className="d-flex align-items-center gap-2">
