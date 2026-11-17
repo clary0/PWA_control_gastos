@@ -18,7 +18,7 @@ export default function ListaProductos() {
   // Estado de carga
   if (cargando) {
     return (
-      <main className="shell-main">
+      <main className="shell-main shell-main--productos">
         <Cargando />
       </main>
     );
@@ -27,7 +27,7 @@ export default function ListaProductos() {
   // Estado de error
   if (error) {
     return (
-      <main className="shell-main">
+      <main className="shell-main shell-main--productos">
         <ErrorCarga
           mensaje={error.message}
           onReintentar={reintentar}
@@ -39,7 +39,7 @@ export default function ListaProductos() {
   // Estado sin resultados
   if (!datos?.length) {
     return (
-      <main className="shell-main">
+      <main className="shell-main shell-main--productos">
         <Vacio />
       </main>
     );
@@ -47,13 +47,9 @@ export default function ListaProductos() {
 
   // Estado con datos
   return (
-    <main className="shell-main">
-      <section className="vista-actual">
-        <h1>Productos de prueba (DummyJSON)</h1>
-
-        <p>
-          Datos externos para demostrar el consumo de una API.
-        </p>
+    <main className="shell-main shell-main--productos">
+      <section className="vista-actual vista-actual--productos">
+        <h1>Productos</h1>
 
         <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
           {datos.map((producto) => (
