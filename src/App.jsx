@@ -5,6 +5,8 @@ import useOnlineStatus from './hooks/useOnlineStatus.js'
 import NoEncontrado from './views/noencontrado.jsx'
 import ViewErrorBoundary from './components/shell/ViewErrorBoundary.jsx'
 import Resumen from './views/Resumen.jsx'
+import ListaProductos from './views/ListaProductos.jsx'
+import DetalleProducto from './views/DetalleProducto.jsx'
 
 
 function NavegacionInferior() {
@@ -105,6 +107,24 @@ function App() {
                 <p>Aquí aparecerán tus ingresos y gastos registrados.</p>
               </section>
             </main>
+          }
+        />
+
+        <Route
+          path="/productos"
+          element={
+            <ViewErrorBoundary>
+              <ListaProductos />
+            </ViewErrorBoundary>
+          }
+        />
+
+        <Route
+          path="/productos/:id"
+          element={
+            <ViewErrorBoundary>
+              <DetalleProducto />
+            </ViewErrorBoundary>
           }
         />
 
