@@ -1,34 +1,36 @@
 
-export default function Resumen() {
-  // Valores iniciales de los movimientos
-  const ingresos = 0
-  const gastos = 0
+import useMovimientos from '../hooks/useMovimientos';
 
-  // Calcular el dinero disponible
-  const disponible = ingresos - gastos
+export default function Resumen() {
+  const { movimientos, ingresos, gastos, disponible } = useMovimientos();
 
   // Formato de moneda mexicana
   const formatoDinero = (cantidad) => {
     return cantidad.toLocaleString('es-MX', {
       style: 'currency',
       currency: 'MXN',
-    })
-  }
+    });
+  };
+
+  // Obtener los últimos cinco movimientos
+  const recientes = [...movimientos]
+    .sort((a, b) => b.fecha.localeCompare(a.fecha))
+    .slice(0, 5);
+
+  // Convertir la fecha al formato día/mes/año
+  const formatoFecha = (fecha) => {
+    const [anio, mes, dia] = fecha.split('-');
+    return `${dia}/${mes}/${anio}`;
+  };
 
   return (
     <main className="shell-main">
       <section className="vista-actual">
         <p className="etiqueta">TU DINERO, BAJO CONTROL</p>
-
         <h2>Resumen</h2>
+        <p>Consulta el estado de tus finanzas personales.</p>
 
-        <p>
-          Consulta el estado de tus finanzas personales.
-        </p>
-
-        {/* Tarjetas financieras */}
         <div className="tarjetas-resumen">
-
           <article className="tarjeta-financiera">
             <i className="bi bi-trending-up icono-ingreso"></i>
             <h3>Ingresos</h3>
@@ -47,21 +49,61 @@ export default function Resumen() {
             <p>{formatoDinero(disponible)}</p>
             <small>Ingresos menos gastos</small>
           </article>
-
         </div>
 
-        {/* Movimientos recientes */}
         <div className="area-contenido movimientos-recientes">
           <h3>
             <i className="bi bi-clock-history me-2"></i>
             Movimientos recientes
           </h3>
 
-          <p>
-            Todavía no tienes movimientos registrados.
-          </p>
+          {recientes.length === 0 ? (
+            <p>Todavía no tienes movimientos registrados.</p>
+          ) : (
+            <div className="table-responsive">
+              <table className="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Concepto</th>
+                    <th>Fecha</th>
+                    <th>Cantidad</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {recientes.map((movimiento) => (
+                    <tr key={movimiento.id}>
+                      <td>
+                        <span className={
+                          movimiento.tipo === 'ingreso'
+                            ? 'badge bg-success'
+                            : 'badge bg-danger'
+                        }>
+                          {movimiento.tipo === 'ingreso' ? 'Ingreso' : 'Gasto'}
+                        </span>
+                      </td>
+
+                      <td>{movimiento.concepto}</td>
+
+                      <td>{formatoFecha(movimiento.fecha)}</td>
+
+                      <td className={
+                        movimiento.tipo === 'ingreso'
+                          ? 'text-success fw-bold'
+                          : 'text-danger fw-bold'
+                      }>
+                        {movimiento.tipo === 'ingreso' ? '+' : '-'}
+                        {formatoDinero(movimiento.cantidad)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </section>
     </main>
-  )
+  );
 }

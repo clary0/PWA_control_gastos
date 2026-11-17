@@ -5,6 +5,10 @@ import useOnlineStatus from './hooks/useOnlineStatus.js'
 import NoEncontrado from './views/noencontrado.jsx'
 import ViewErrorBoundary from './components/shell/ViewErrorBoundary.jsx'
 import Resumen from './views/Resumen.jsx'
+import ListaProductos from './views/ListaProductos.jsx'
+import DetalleProducto from './views/DetalleProducto.jsx'
+import Registrar from './views/Registrar.jsx'
+import Movimientos from './views/Movimientos.jsx'
 
 
 function NavegacionInferior() {
@@ -87,24 +91,36 @@ function App() {
         <Route
           path="/registrar"
           element={
-            <main className="shell-main">
-              <section className="vista-actual">
-                <h2>Registrar movimiento</h2>
-                <p>Próximamente podrás registrar ingresos y gastos.</p>
-              </section>
-            </main>
+            <ViewErrorBoundary>
+              <Registrar />
+            </ViewErrorBoundary>
           }
         />
 
         <Route
           path="/movimientos"
           element={
-            <main className="shell-main">
-              <section className="vista-actual">
-                <h2>Movimientos</h2>
-                <p>Aquí aparecerán tus ingresos y gastos registrados.</p>
-              </section>
-            </main>
+            <ViewErrorBoundary>
+              <Movimientos />
+            </ViewErrorBoundary>
+          }
+        />
+
+        <Route
+          path="/productos"
+          element={
+            <ViewErrorBoundary>
+              <ListaProductos />
+            </ViewErrorBoundary>
+          }
+        />
+
+        <Route
+          path="/productos/:id"
+          element={
+            <ViewErrorBoundary>
+              <DetalleProducto />
+            </ViewErrorBoundary>
           }
         />
 

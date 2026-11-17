@@ -424,3 +424,44 @@ button {
     grid-column: auto;
   }
 }
+
+/* ========================================
+   PÁGINA DE PRODUCTOS - ANCHO COMPLETO
+   ======================================== */
+
+.shell-main--productos {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 24px 32px;
+  padding-bottom: calc(var(--alto-nav) + 1rem);
+  box-sizing: border-box;
+}
+
+.vista-actual--productos {
+  width: 100%;
+  min-height: 100%;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+.vista-actual--productos h1 {
+  color: var(--gastos);
+  margin-bottom: 24px;
+}
+
+/* Adaptación a celulares */
+@media (max-width: 480px) {
+  .shell-main--productos {
+    padding: 16px 12px;
+    padding-bottom: calc(var(--alto-nav) + 1rem);
+  }
+
+  .vista-actual--productos {
+    padding: 4px;
+  }
+}
