@@ -10,11 +10,14 @@ export default function Registrar() {
 
   // Consultar productos de DummyJSON
   const {
-    datos: productos,
+    datos,
     cargando,
     error,
     reintentar,
   } = useListaProductos();
+
+  // Obtener la lista de productos del resultado del repositorio
+  const productos = datos?.productos ?? [];
 
   const obtenerFechaActual = () => {
     const fecha = new Date();
@@ -37,7 +40,7 @@ export default function Registrar() {
     const id = e.target.value;
     setProductoSeleccionado(id);
 
-    const producto = productos?.find(
+    const producto = productos.find(
       (p) => p.id === id
     );
 
@@ -142,13 +145,13 @@ export default function Registrar() {
                   className="form-select"
                   value={productoSeleccionado}
                   onChange={manejarProducto}
-                  disabled={!productos?.length}
+                  disabled={!productos.length}
                 >
                   <option value="">
                     Selecciona un producto...
                   </option>
 
-                  {productos?.map((producto) => (
+                  {productos.map((producto) => (
                     <option
                       key={producto.id}
                       value={producto.id}

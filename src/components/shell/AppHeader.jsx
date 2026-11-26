@@ -1,7 +1,7 @@
-
 import { Link } from 'react-router'
 import InstallButton from './InstallButton.jsx'
 import NetworkBadge from './NetworkBadge.jsx'
+import BarraSesion from '../BarraSesion.jsx'
 
 export default function AppHeader({ enLinea }) {
   return (
@@ -15,6 +15,7 @@ export default function AppHeader({ enLinea }) {
         <div className="d-flex align-items-center gap-2">
           <InstallButton />
           <NetworkBadge enLinea={enLinea} />
+          <BarraSesion />
         </div>
       </div>
     </header>

@@ -1,50 +1,69 @@
 
-const CLAVE = 'control-gastos-movimientos';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  serverTimestamp,
+  setDoc,
+  where,
+} from 'firebase/firestore';
 
-// Obtener todos los movimientos guardados
-export function listarMovimientos() {
-  try {
-    const datos = localStorage.getItem(CLAVE);
-    return datos ? JSON.parse(datos) : [];
-  } catch (error) {
-    console.error('Error al consultar movimientos:', error);
-    return [];
-  }
-}
+import { db } from '../config/firebase.js';
 
-// Guardar la lista de movimientos
-function guardarMovimientos(movimientos) {
-  localStorage.setItem(CLAVE, JSON.stringify(movimientos));
+// Colección de movimientos en Firestore
+const movimientos = collection(db, 'movimientos');
+
+// Escuchar los movimientos del usuario autenticado
+export function escucharMovimientos(uid, alCambiar) {
+  const consulta = query(
+    movimientos,
+    where('uid', '==', uid)
+  );
+
+  return onSnapshot(
+    consulta,
+    { includeMetadataChanges: true },
+    (resultado) => {
+      const lista = resultado.docs.map((documento) => ({
+        id: documento.id,
+        ...documento.data({ serverTimestamps: 'estimate' }),
+        pendiente: documento.metadata.hasPendingWrites,
+      }));
+
+      alCambiar(lista);
+    },
+    (error) => {
+      console.error(
+        'No se pudieron consultar los movimientos:',
+        error.code
+      );
+    }
+  );
 }
 
 // Registrar un nuevo movimiento
-export function registrarMovimiento(movimiento) {
-  const movimientos = listarMovimientos();
+export function registrarMovimiento(usuario, movimiento) {
+  const referencia = doc(movimientos);
 
-  const nuevoMovimiento = {
-    id: crypto.randomUUID(),
+  setDoc(referencia, {
+    uid: usuario.uid,
     tipo: movimiento.tipo,
     concepto: movimiento.concepto.trim(),
     cantidad: Number(movimiento.cantidad),
     fecha: movimiento.fecha,
-  };
+    creadoEn: serverTimestamp(),
+  }).catch((error) => {
+    console.error('No se pudo guardar el movimiento:', error.code);
+  });
 
-  movimientos.push(nuevoMovimiento);
-  guardarMovimientos(movimientos);
-
-  return nuevoMovimiento;
+  return referencia.id;
 }
 
-// Eliminar un movimiento por su ID
+// Eliminar un movimiento
 export function eliminarMovimiento(id) {
-  const movimientos = listarMovimientos();
-
-  const actualizados = movimientos.filter(
-    (movimiento) => movimiento.id !== id
-  );
-
-  guardarMovimientos(actualizados);
-
-  return actualizados;
+  deleteDoc(doc(movimientos, id)).catch((error) => {
+    console.error('No se pudo eliminar el movimiento:', error.code);
+  });
 }
-

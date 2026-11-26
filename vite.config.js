@@ -8,7 +8,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // Avisar cuando exista una nueva versión
+      registerType: 'prompt',
 
       includeAssets: [
         'favicon.ico',
@@ -16,23 +17,19 @@ export default defineConfig({
       ],
 
       manifest: {
-        // 1. Identidad de la aplicación
         id: '/',
         name: 'Control de Gastos',
         short_name: 'Mis Gastos',
         description: 'Administra tus ingresos, registra tus gastos y controla tus finanzas personales.',
         lang: 'es-MX',
 
-        // 2. Inicio y visualización
         start_url: '/',
         scope: '/',
         display: 'standalone',
 
-        // 3. Colores de la aplicación
         theme_color: '#1e4938',
         background_color: '#F5F7F5',
 
-        // 4. Iconos de la aplicación
         icons: [
           {
             src: '/pwa-64x64.png',
@@ -57,7 +54,6 @@ export default defineConfig({
           },
         ],
 
-        // 5. Accesos directos de la aplicación
         shortcuts: [
           {
             name: 'Registrar gasto',
@@ -66,6 +62,41 @@ export default defineConfig({
           {
             name: 'Ver movimientos',
             url: '/movimientos',
+          },
+        ],
+      },
+
+      // Configuración para trabajar sin conexión
+      workbox: {
+        // 1. Guardar los archivos generados por el build
+        globPatterns: [
+          '**/*.{js,css,html,svg,png,ico,webmanifest}',
+        ],
+
+        // 2. Permitir navegar por las rutas sin internet
+        navigateFallback: 'index.html',
+        navigateFallbackDenylist: [/^\/__\//],
+
+        // 3. Guardar imágenes externas en caché
+        runtimeCaching: [
+          {
+            urlPattern: ({ request, sameOrigin }) =>
+              request.destination === 'image' && !sameOrigin,
+
+            handler: 'CacheFirst',
+
+            options: {
+              cacheName: 'imagenes-externas',
+
+              expiration: {
+                maxEntries: 60,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
+
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
           },
         ],
       },

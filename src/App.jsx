@@ -9,7 +9,7 @@ import ListaProductos from './views/ListaProductos.jsx'
 import DetalleProducto from './views/DetalleProducto.jsx'
 import Registrar from './views/Registrar.jsx'
 import Movimientos from './views/Movimientos.jsx'
-
+import AvisoActualizacion from './components/AvisoActualizacion.jsx'
 
 function NavegacionInferior() {
   const navigate = useNavigate()
@@ -128,6 +128,7 @@ function App() {
       </Routes>
 
       <NavegacionInferior />
+      <AvisoActualizacion />
     </div>
   )
 }

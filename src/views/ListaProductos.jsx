@@ -36,8 +36,11 @@ export default function ListaProductos() {
     );
   }
 
+  // Obtener los productos
+  const productos = datos?.productos ?? [];
+
   // Estado sin resultados
-  if (!datos?.length) {
+  if (!productos.length) {
     return (
       <main className="shell-main shell-main--productos">
         <Vacio />
@@ -51,8 +54,16 @@ export default function ListaProductos() {
       <section className="vista-actual vista-actual--productos">
         <h1>Productos</h1>
 
+        {/* Aviso cuando los datos vienen de IndexedDB */}
+        {datos.origen === 'cache' && (
+          <div className="alert alert-info" role="alert">
+            Datos guardados: estás consultando la información
+            almacenada en este dispositivo.
+          </div>
+        )}
+
         <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
-          {datos.map((producto) => (
+          {productos.map((producto) => (
             <div className="col" key={producto.id}>
               <TarjetaProducto producto={producto} />
             </div>

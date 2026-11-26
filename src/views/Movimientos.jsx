@@ -58,6 +58,7 @@ export default function Movimientos() {
                     <th>Concepto</th>
                     <th>Fecha</th>
                     <th>Cantidad</th>
+                    <th>Sincronización</th>
                     <th>Acción</th>
                   </tr>
                 </thead>
@@ -95,6 +96,18 @@ export default function Movimientos() {
                       </td>
 
                       <td>
+                        <span
+                          className={
+                            movimiento.pendiente
+                              ? 'badge bg-warning text-dark'
+                              : 'badge bg-success'
+                          }
+                        >
+                          {movimiento.pendiente ? 'Pendiente' : 'Enviado'}
+                        </span>
+                      </td>
+
+                      <td>
                         <button
                           type="button"
                           className="btn btn-outline-danger btn-sm"
@@ -116,4 +129,3 @@ export default function Movimientos() {
     </main>
   );
 }
-
