@@ -1,4 +1,3 @@
-
 import {
   collection,
   deleteDoc,
@@ -12,10 +11,10 @@ import {
 
 import { db } from '../config/firebase.js';
 
-// Colección de movimientos en Firestore
+// Colección de movimientos en Firestore.
 const movimientos = collection(db, 'movimientos');
 
-// Escuchar los movimientos del usuario autenticado
+// Escuchar los movimientos del usuario autenticado.
 export function escucharMovimientos(uid, alCambiar) {
   const consulta = query(
     movimientos,
@@ -43,7 +42,7 @@ export function escucharMovimientos(uid, alCambiar) {
   );
 }
 
-// Registrar un nuevo movimiento
+// Registrar un nuevo movimiento.
 export function registrarMovimiento(usuario, movimiento) {
   const referencia = doc(movimientos);
 
@@ -53,6 +52,8 @@ export function registrarMovimiento(usuario, movimiento) {
     concepto: movimiento.concepto.trim(),
     cantidad: Number(movimiento.cantidad),
     fecha: movimiento.fecha,
+    conImagen: Boolean(movimiento.conImagen),
+    imagen: movimiento.conImagen ? 'pendiente' : null,
     creadoEn: serverTimestamp(),
   }).catch((error) => {
     console.error('No se pudo guardar el movimiento:', error.code);
@@ -61,7 +62,7 @@ export function registrarMovimiento(usuario, movimiento) {
   return referencia.id;
 }
 
-// Eliminar un movimiento
+// Eliminar un movimiento.
 export function eliminarMovimiento(id) {
   deleteDoc(doc(movimientos, id)).catch((error) => {
     console.error('No se pudo eliminar el movimiento:', error.code);

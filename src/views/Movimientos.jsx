@@ -1,10 +1,69 @@
 
+import { useEffect, useState } from 'react';
 import useMovimientos from '../hooks/useMovimientos';
+import {
+  obtenerFotografia,
+  eliminarFotografia,
+} from '../repositories/fotografiasRepository.js';
+
+// Componente para mostrar la fotografía de cada movimiento.
+function FotoMovimiento({ id, imagenUrl }) {
+  const [foto, setFoto] = useState('');
+
+  useEffect(() => {
+    let url;
+    let activo = true;
+
+    obtenerFotografia(id)
+      .then((registro) => {
+        if (!activo) return;
+
+        if (registro?.archivo) {
+          // Primero intenta mostrar la fotografía local.
+          url = URL.createObjectURL(registro.archivo);
+          setFoto(url);
+        } else if (imagenUrl) {
+          // Si no existe localmente, muestra la de Cloudinary.
+          setFoto(imagenUrl);
+        }
+      })
+      .catch((error) => {
+        console.error('No se pudo consultar la fotografía:', error);
+
+        if (activo && imagenUrl) {
+          setFoto(imagenUrl);
+        }
+      });
+
+    return () => {
+      activo = false;
+
+      if (url) {
+        URL.revokeObjectURL(url);
+      }
+    };
+  }, [id, imagenUrl]);
+
+  if (!foto) {
+    return <span className="text-secondary">Sin fotografía</span>;
+  }
+
+  return (
+    <img
+      src={foto}
+      alt="Fotografía del gasto"
+      width="65"
+      height="65"
+      className="rounded"
+      style={{ objectFit: 'cover' }}
+    />
+  );
+}
 
 export default function Movimientos() {
   const { movimientos, eliminar } = useMovimientos();
 
-  // Formato de moneda mexicana
+  // Formato de moneda mexicana.
   const formatoDinero = (cantidad) => {
     return cantidad.toLocaleString('es-MX', {
       style: 'currency',
@@ -12,23 +71,30 @@ export default function Movimientos() {
     });
   };
 
-  // Formato de fecha
+  // Formato de fecha.
   const formatoFecha = (fecha) => {
     const [anio, mes, dia] = fecha.split('-');
     return `${dia}/${mes}/${anio}`;
   };
 
-  // Ordenar del más reciente al más antiguo
+  // Ordenar del más reciente al más antiguo.
   const movimientosOrdenados = [...movimientos].sort(
     (a, b) => b.fecha.localeCompare(a.fecha)
   );
 
-  const manejarEliminacion = (id) => {
+  // Eliminar movimiento y su fotografía local.
+  const manejarEliminacion = async (id) => {
     const confirmar = window.confirm(
       '¿Estás segura de que deseas eliminar este movimiento?'
     );
 
-    if (confirmar) {
+    if (!confirmar) return;
+
+    try {
+      await eliminarFotografia(id);
+      eliminar(id);
+    } catch (error) {
+      console.error('No se pudo eliminar la fotografía:', error);
       eliminar(id);
     }
   };
@@ -56,6 +122,7 @@ export default function Movimientos() {
                   <tr>
                     <th>Tipo</th>
                     <th>Concepto</th>
+                    <th>Fotografía</th>
                     <th>Fecha</th>
                     <th>Cantidad</th>
                     <th>Sincronización</th>
@@ -81,6 +148,17 @@ export default function Movimientos() {
                       </td>
 
                       <td>{movimiento.concepto}</td>
+
+                      <td>
+                        {movimiento.tipo === 'gasto' ? (
+                          <FotoMovimiento
+                            id={movimiento.id}
+                            imagenUrl={movimiento.imagenUrl}
+                          />
+                        ) : (
+                          <span className="text-secondary">No aplica</span>
+                        )}
+                      </td>
 
                       <td>{formatoFecha(movimiento.fecha)}</td>
 

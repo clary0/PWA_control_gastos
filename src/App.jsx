@@ -1,16 +1,22 @@
+
 import { useLayoutEffect } from 'react'
 import { Routes, Route, useNavigate, useLocation } from 'react-router'
+
 import AppHeader from './components/shell/AppHeader.jsx'
 import useOnlineStatus from './hooks/useOnlineStatus.js'
 import NoEncontrado from './views/noencontrado.jsx'
 import ViewErrorBoundary from './components/shell/ViewErrorBoundary.jsx'
+
 import Resumen from './views/Resumen.jsx'
 import ListaProductos from './views/ListaProductos.jsx'
 import DetalleProducto from './views/DetalleProducto.jsx'
 import Registrar from './views/Registrar.jsx'
 import Movimientos from './views/Movimientos.jsx'
+import Perfil from './views/Perfil.jsx'
+
 import AvisoActualizacion from './components/AvisoActualizacion.jsx'
 
+// Navegación inferior
 function NavegacionInferior() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -46,10 +52,23 @@ function NavegacionInferior() {
         <span aria-hidden="true">📋</span>
         Movimientos
       </button>
+
+      <button
+        type="button"
+        className={location.pathname === '/perfil' ? 'activo' : ''}
+        aria-current={location.pathname === '/perfil' ? 'page' : undefined}
+        onClick={() => navigate('/perfil')}
+      >
+        <span aria-hidden="true">
+          <i className="bi bi-person-circle"></i>
+        </span>
+        Perfil
+      </button>
     </nav>
   )
 }
 
+// Página no encontrada
 function PaginaNoEncontrada() {
   const navigate = useNavigate()
 
@@ -60,6 +79,7 @@ function PaginaNoEncontrada() {
   )
 }
 
+// Aplicación principal
 function App() {
   const enLinea = useOnlineStatus()
 
@@ -78,6 +98,7 @@ function App() {
         </div>
       )}
 
+      {/* Rutas de la aplicación */}
       <Routes>
         <Route
           path="/"
@@ -107,6 +128,15 @@ function App() {
         />
 
         <Route
+          path="/perfil"
+          element={
+            <ViewErrorBoundary>
+              <Perfil />
+            </ViewErrorBoundary>
+          }
+        />
+
+        <Route
           path="/productos"
           element={
             <ViewErrorBoundary>
@@ -124,10 +154,16 @@ function App() {
           }
         />
 
-        <Route path="*" element={<PaginaNoEncontrada />} />
+        <Route
+          path="*"
+          element={<PaginaNoEncontrada />}
+        />
       </Routes>
 
+      {/* Navegación inferior */}
       <NavegacionInferior />
+
+      {/* Aviso de actualización de la PWA */}
       <AvisoActualizacion />
     </div>
   )
