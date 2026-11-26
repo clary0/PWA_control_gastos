@@ -1,4 +1,3 @@
-
 import { useParams, Link } from 'react-router';
 import { useProducto } from '../hooks/useProductos';
 import {
@@ -12,10 +11,14 @@ export default function DetalleProducto() {
 
   const {
     cargando,
-    datos: producto,
+    datos,
     error,
     reintentar,
   } = useProducto(id);
+
+  // Obtener el producto y el origen de los datos
+  const producto = datos?.producto;
+  const origen = datos?.origen;
 
   // Estado de carga
   if (cargando) {
@@ -52,6 +55,13 @@ export default function DetalleProducto() {
     <main className="shell-main">
       <section className="vista-actual">
         <h1>{producto.titulo}</h1>
+
+        {origen === 'cache' && (
+          <div className="alert alert-info" role="alert">
+            Estás consultando los datos guardados en este dispositivo.
+            No hay conexión a Internet.
+          </div>
+        )}
 
         {producto.imagen && (
           <img

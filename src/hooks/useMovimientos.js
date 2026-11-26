@@ -1,26 +1,58 @@
-import { useCallback, useState } from 'react';
+
+import { useCallback, useEffect, useState } from 'react';
 
 import {
-  listarMovimientos,
+  escucharMovimientos,
   registrarMovimiento,
   eliminarMovimiento,
 } from '../repositories/movimientosRepository';
 
+import { useSesion } from '../sesion/useSesion';
+
 export default function useMovimientos() {
-  const [movimientos, setMovimientos] = useState(() => listarMovimientos());
+  const { usuario } = useSesion();
+
+  // Guardar los movimientos junto con el UID de su propietario
+  const [estadoMovimientos, setEstadoMovimientos] = useState({
+    uid: null,
+    datos: [],
+  });
+
+  // Escuchar los movimientos del usuario en Firestore
+  useEffect(() => {
+    if (!usuario?.uid) return;
+
+    const uid = usuario.uid;
+
+    const dejarDeEscuchar = escucharMovimientos(uid, (lista) => {
+      setEstadoMovimientos({
+        uid,
+        datos: lista,
+      });
+    });
+
+    return dejarDeEscuchar;
+  }, [usuario?.uid]);
+
+  // Mostrar únicamente los movimientos del usuario actual
+  const movimientos =
+    estadoMovimientos.uid === (usuario?.uid ?? null)
+      ? estadoMovimientos.datos
+      : [];
 
   // Registrar un nuevo movimiento
-  const agregar = useCallback((movimiento) => {
-    const nuevo = registrarMovimiento(movimiento);
+  const agregar = useCallback(
+    (movimiento) => {
+      if (!usuario) return;
 
-    setMovimientos((actuales) => [...actuales, nuevo]);
-  }, []);
+      registrarMovimiento(usuario, movimiento);
+    },
+    [usuario]
+  );
 
   // Eliminar un movimiento
   const eliminar = useCallback((id) => {
     eliminarMovimiento(id);
-
-    setMovimientos(listarMovimientos());
   }, []);
 
   // Calcular ingresos
